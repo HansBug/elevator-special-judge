@@ -1,3 +1,7 @@
+import json
+import re
+
+from aes import decrypt
 from model import Elevator
 from parse import parse_input, parse_output
 
@@ -7,7 +11,25 @@ WRONG_ANSWER = 'Your answer does not meet the final requirements.' \
                'Or maybe the elevator\'s door is not closed.'
 
 
+def decrypt_aes(encrypted, do_it=False):
+    if do_it:
+        try:
+            pattern = re.compile(r'\[\s*\d+\.\d+\](.*)')
+            matcher = re.match(pattern, encrypted)
+            cipher = matcher.group(1)
+            plain = decrypt(cipher)
+            plain_json = json.loads(plain)
+            return plain_json['content']
+        except Exception:
+            raise ValueError('Unexpected encryption error occurred. '
+                             'If you are not trying to hack the judge system, '
+                             'please contact the course staff for a solution.')
+    else:
+        return encrypted
+
+
 def _initialize(input_list, output_list):
+    output_list = [decrypt_aes(output_line) for output_line in output_list]
     passenger_list = [parse_input(request) for request in input_list]
     state_list = [parse_output(state) for state in output_list]
     # passenger_list.sort(key=lambda e: e['time']) 暂时用不到，不过之后也许会用到
