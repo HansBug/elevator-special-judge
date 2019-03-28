@@ -56,7 +56,7 @@ class Passenger:
 
 class Elevator:
     run_timespan = 0.5
-    serve_timespan = 0.25
+    serve_timespan = 0.5
 
     @unique
     class State(Enum):
