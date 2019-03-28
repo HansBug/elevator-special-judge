@@ -12,7 +12,7 @@ def _initialize(input_list, output_list):
     state_list = [parse_output(state) for state in output_list]
     # passenger_list.sort(key=lambda e: e['time']) 暂时用不到，不过之后也许会用到
     # state_list.sort(key=lambda e: e['time']) 输入数据确保时间单调不递减，暂时用不到
-    passenger_dict = {passenger.pid: passenger for passenger in passenger_list}
+    passenger_dict = {passenger[1].pid: passenger[1] for passenger in passenger_list}
     return passenger_dict, state_list
 
 
@@ -75,12 +75,12 @@ def judge(input_list, output_list):
             )
         except ValueError as e:
             return False, str(e)
-    return True, ACCEPTED if \
+    return (True, ACCEPTED) if \
         not elevator.serving() and all([True if
                                         not passenger.in_elevator and passenger.floor == passenger.target
                                         else False
-                                        for passenger in passenger_dict]) \
-        else False, WRONG_ANSWER
+                                        for passenger in passenger_dict.values()]) \
+        else (False, WRONG_ANSWER)
 
 
 def open_file(input_file, output_file):
@@ -96,4 +96,8 @@ def open_file(input_file, output_file):
 
 
 if __name__ == '__main__':
-    pass
+    input_file_path = 'stdin.txt'
+    output_file_path = 'stdout.txt'
+    _input, _output = open_file(input_file_path, output_file_path)
+    result = judge(_input, _output)
+    print(result)

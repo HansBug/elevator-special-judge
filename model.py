@@ -104,8 +104,8 @@ class Elevator:
                 'cannot enter elevator',
                 'at different floor'
             ]))
-        self._passengers[passenger.pid] = passenger
         passenger.enter_elevator(floor)
+        self._passengers[passenger.pid] = passenger
 
     def leave_passenger(self, passenger, floor, time):
         if passenger.pid not in self._passengers:
@@ -129,6 +129,7 @@ class Elevator:
                 'cannot leave elevator',
                 'at different floor'
             ]))
+        passenger.leave_elevator(floor)
         del self._passengers[passenger.pid]
 
     def judge_run_speed(self, floor, time):
