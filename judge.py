@@ -39,6 +39,13 @@ def _simulate_passenger_in(**kwargs):
     time = state['time']
     pid = state['pid']
     floor = state['floor']
+    if pid not in passenger_dict:
+        raise ValueError(' '.join([
+            'Passenger',
+            str(pid),
+            'cannot enter the elevator',
+            'because he/she does not exist'
+        ]))
     passenger = passenger_dict[pid]
     elevator.enter_passenger(passenger, floor, time)
 
@@ -50,6 +57,13 @@ def _simulate_passenger_out(**kwargs):
     time = state['time']
     pid = state['pid']
     floor = state['floor']
+    if pid not in passenger_dict:
+        raise ValueError(' '.join([
+            'Passenger',
+            str(pid),
+            'cannot leave the elevator',
+            'because he/she does not exist'
+        ]))
     passenger = passenger_dict[pid]
     elevator.leave_passenger(passenger, floor, time)
 

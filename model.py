@@ -87,22 +87,22 @@ class Elevator:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
-                'already in elevator',
+                'already in the elevator',
                 'so he/she cannot get in'
             ]))
         if self._state != Elevator.State.SERVING:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
-                'cannot enter elevator',
-                'when elevator is not serving'
+                'cannot enter the elevator',
+                'when the elevator is not serving'
             ]))
         if floor != self._floor:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
-                'cannot enter elevator',
-                'at different floor'
+                'cannot enter the elevator',
+                'at a different floor floor'
             ]))
         passenger.enter_elevator(floor)
         self._passengers[passenger.pid] = passenger
@@ -112,22 +112,22 @@ class Elevator:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
-                'not in elevator',
+                'not in the elevator',
                 'so he/she cannot get out'
             ]))
         if self._state != Elevator.State.SERVING:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
-                'cannot leave elevator',
-                'when elevator is not serving'
+                'cannot leave the elevator',
+                'when the elevator is not serving'
             ]))
         if floor != self._floor:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
-                'cannot leave elevator',
-                'at different floor'
+                'cannot leave the elevator',
+                'at a different floor floor'
             ]))
         passenger.leave_elevator(floor)
         del self._passengers[passenger.pid]
