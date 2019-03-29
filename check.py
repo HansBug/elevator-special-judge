@@ -84,7 +84,6 @@ def check_input_validity(request_list):
     try:
         request_list = [_parse_input(request.rstrip()) for request in request_list]
         _check_validity(request_list)
-        _check_time(request_list)
         time = _check_time(request_list)
         return True, 'Your input is valid, base time is ' + str(time)
     except ValueError as e:
