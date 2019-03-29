@@ -35,7 +35,7 @@ def _initialize(input_list, output_list):
     # passenger_list.sort(key=lambda e: e['time']) 暂时用不到，不过之后也许会用到
     # state_list.sort(key=lambda e: e['time']) 输入数据确保时间单调不递减，暂时用不到
     passenger_dict = {passenger[1].pid: passenger[1] for passenger in passenger_list}
-    return passenger_dict, state_list
+    return passenger_dict, state_list, output_list
 
 
 def _simulate_elevator_open(**kwargs):
@@ -93,9 +93,9 @@ def _simulate_passenger_out(**kwargs):
 def judge(input_list, output_list):
     elevator = Elevator()
     try:
-        passenger_dict, state_list = _initialize(input_list, output_list)
+        passenger_dict, state_list, output_list = _initialize(input_list, output_list)
     except ValueError as e:
-        return False, str(e)
+        return False, str(e), output_list
     simulate_mapper = {
         'OPEN': _simulate_elevator_open,
         'CLOSE': _simulate_elevator_close,
@@ -110,13 +110,13 @@ def judge(input_list, output_list):
                 passenger_dict=passenger_dict,
             )
         except ValueError as e:
-            return False, str(e)
-    return (True, ACCEPTED) if \
+            return False, str(e), output_list
+    return (True, ACCEPTED, output_list) if \
         not elevator.serving() and all([True if
                                         not passenger.in_elevator and passenger.floor == passenger.target
                                         else False
                                         for passenger in passenger_dict.values()]) \
-        else (False, WRONG_ANSWER)
+        else (False, WRONG_ANSWER, output_list)
 
 
 def open_file(input_file, output_file):
