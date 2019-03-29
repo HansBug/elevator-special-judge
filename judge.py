@@ -12,11 +12,11 @@ WRONG_ANSWER = 'Your answer does not meet the final requirements.' \
 
 
 def decrypt_aes(encrypted, do_it=False):
+    pattern = re.compile(r'^\[\s*\d+\.\d+\](.*)')
+    matcher = re.match(pattern, encrypted)
+    cipher = matcher.group(1)
     if do_it:
         try:
-            pattern = re.compile(r'\[\s*\d+\.\d+\](.*)')
-            matcher = re.match(pattern, encrypted)
-            cipher = matcher.group(1)
             plain = decrypt(cipher)
             plain_json = json.loads(plain)
             return plain_json['content']
@@ -25,7 +25,7 @@ def decrypt_aes(encrypted, do_it=False):
                              'If you are not trying to hack the judge system, '
                              'please contact the course staff for a solution.')
     else:
-        return encrypted
+        return cipher
 
 
 def _initialize(input_list, output_list):

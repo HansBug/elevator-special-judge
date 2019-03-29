@@ -3,7 +3,7 @@ import binascii
 
 from Crypto.Cipher import AES
 
-_key = b"RzmgzpCFLMjUFGVjD6wp9wkpw6BdAywV"
+_key = b"#I88--_NrPAqCm9N"
 
 
 def _base64_decode(s):
