@@ -17,10 +17,13 @@ def _parse_input(request):
 def _check_validity(request_list):
     last_time = 0.0
     valid_request_count = 0
+    pid_dict = {}
     for request in request_list:
         original = request['original']
         if request['time'] < 0.0:
             raise ValueError('Request time negative: ' + original)
+        if request['pid'] in pid_dict:
+            raise ValueError('Request pid repeated: ' + original)
         if request['pid'] < 0 or request['pid'] > 2147483647:
             raise ValueError('Request pid out pf range: ' + original)
         if request['start'] > 15 or request['end'] > 15:
@@ -30,6 +33,7 @@ def _check_validity(request_list):
         if request['time'] < last_time:
             raise ValueError('Request time decreasing: ' + original)
         last_time = request['time']
+        pid_dict[request['pid']] = request
         valid_request_count += 1
     if valid_request_count > 30:
         raise ValueError('Too many valid requests')
