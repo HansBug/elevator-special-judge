@@ -1,3 +1,4 @@
+import os
 import random
 import re
 
@@ -80,7 +81,7 @@ def _check_time(request_list, need_max=False):
     return max(max_time + 5, 1.1 * max_time) if need_max else max_time
 
 
-def check_input_validity(request_list):
+def _check_input_validity(request_list):
     try:
         request_list = [_parse_input(request.rstrip()) for request in request_list]
         _check_validity(request_list)
@@ -90,9 +91,15 @@ def check_input_validity(request_list):
         return False, str(e)
 
 
-if __name__ == '__main__':
+def check(input_file_path):
     input_list = []
-    with open('stdin.txt') as f:
+    if not os.path.exists(input_file_path):
+        raise FileNotFoundError
+    with open(input_file_path) as f:
         for line in f:
             input_list.append(line)
-        print(check_input_validity(input_list))
+        return _check_input_validity(input_list)
+
+
+if __name__ == '__main__':
+    print(check('stdin.txt'))
