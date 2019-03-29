@@ -3,7 +3,7 @@ import re
 
 
 def _parse_input(request):
-    pattern = re.compile(r'^\[(\d+\.\d)\](\d{1,10})-FROM-(\d{1,2})-TO-(\d{1,2})$')
+    pattern = re.compile(r'^\[(\d+\.\d)\](\d+)-FROM-(\d+)-TO-(\d+)$')
     matcher = re.match(pattern, request)
     if not matcher:
         raise ValueError('Invalid Input: ' + request)
