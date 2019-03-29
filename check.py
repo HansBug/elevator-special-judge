@@ -3,7 +3,7 @@ import re
 
 
 def _parse_input(request):
-    pattern = re.compile(r'\[(\d+\.\d)\](\d{1,10})-FROM-(\d{1,2})-TO-(\d{1,2})')
+    pattern = re.compile(r'^\[(\d+\.\d)\](\d{1,10})-FROM-(\d{1,2})-TO-(\d{1,2})$')
     matcher = re.match(pattern, request)
     if not matcher:
         raise ValueError('Invalid Input: ' + request)
@@ -23,6 +23,8 @@ def _check_validity(request_list):
             raise ValueError('Request time negative: ' + original)
         if request['pid'] < 0 or request['pid'] > 2147483647:
             raise ValueError('Request pid out pf range: ' + original)
+        if request['start'] > 15 or request['end'] > 15:
+            raise ValueError('Request floor out of range: ' + original)
         if request['start'] == request['end']:
             raise ValueError('Request has same start and end: ' + original)
         if request['time'] < last_time:
@@ -76,7 +78,7 @@ def _check_time(request_list, need_max=False):
 
 def check_input_validity(request_list):
     try:
-        request_list = [_parse_input(request) for request in request_list]
+        request_list = [_parse_input(request.rstrip()) for request in request_list]
         _check_validity(request_list)
         _check_time(request_list)
         time = _check_time(request_list)
