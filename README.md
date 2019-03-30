@@ -9,9 +9,4 @@
 
 #### 打包工具
  - requirements: pyinstaller >= 3.3 (mac仅有此依赖)
- - usage: ./pack.sh check_interface.py    将会在`./dist`目录下生成可执行文件datacheck
-
-#### 可执行文件
- - usage: ./datacheck -i <input_path> -o <output_path> 
-   
-   input_path中是需要检查的样例文件，若程序正常运行将会在`output_path`输出检查的信息，否则会在`stderr`输出隐藏了部分信息的报错
+ - usage: ./pack.sh check_interface.py    将会在`./release`目录下生成可执行文件datacheck

@@ -1,1 +1,1 @@
-pyinstaller -F $1 -n datacheck
+pyinstaller -F $1 -n datacheck --distpath=./release
