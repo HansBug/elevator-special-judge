@@ -1,3 +1,4 @@
+import math
 import os
 import random
 import re
@@ -40,7 +41,7 @@ def _check_validity(request_list):
         raise ValueError('Too many valid requests')
 
 
-def _check_time(request_list, need_max=False):
+def _check_time(request_list):
     base_run_timespan = 0.5
     base_serve_timespan = 0.5
     run_timespan_disturb = 0.05
@@ -78,7 +79,7 @@ def _check_time(request_list, need_max=False):
             max_time = time
     if max_time >= 170.0:
         raise ValueError('Request execute time too long')
-    return max(max_time + 5, 1.1 * max_time) if need_max else max_time
+    return math.ceil(max_time), math.ceil(max(max_time + 5, 1.1 * max_time))
 
 
 def _check_input_validity(request_list):
