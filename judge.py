@@ -30,13 +30,12 @@ def __decrypt_aes(encrypted, do_it=True):
 
 
 def __initialize(input_list, output_list):
-    output_list = [__decrypt_aes(output_line) for output_line in output_list]
     passenger_list = [parse_input(request) for request in input_list]
     state_list = [parse_output(state) for state in output_list]
     # passenger_list.sort(key=lambda e: e['time']) 暂时用不到，不过之后也许会用到
     # state_list.sort(key=lambda e: e['time']) 输入数据确保时间单调不递减，暂时用不到
     passenger_dict = {passenger[1].pid: passenger[1] for passenger in passenger_list}
-    return passenger_dict, state_list, output_list
+    return passenger_dict, state_list
 
 
 def __simulate_elevator_open(**kwargs):
@@ -95,7 +94,8 @@ def judge(input_list, output_list, check_max_time=False):
     base_time, max_time = get_base_and_max_time(input_list)
     elevator = Elevator()
     try:
-        passenger_dict, state_list, output_list = __initialize(input_list, output_list)
+        output_list = list(map(__decrypt_aes, output_list))
+        passenger_dict, state_list = __initialize(input_list, output_list)
     except ValueError as e:
         return False, str(e), output_list
     simulate_mapper = {
