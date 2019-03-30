@@ -77,14 +77,7 @@ def __calculate_time(request_list):
             floor = request_end_floor
         if time > max_time:
             max_time = time
-    return max_time
-
-
-def __check_time(request_list):
-    time = __calculate_time(request_list)
-    if time >= 170.0:
-        raise ValueError('Request execute time too long')
-    return math.ceil(time), math.ceil(max(time + 5, 1.1 * time))
+    return math.ceil(max_time), math.ceil(max(max_time + 5, 1.1 * max_time))
 
 
 def __parse_request_list(input_list):
@@ -95,7 +88,9 @@ def __check_input_validity(input_list):
     try:
         request_list = __parse_request_list(input_list)
         __check_validity(request_list)
-        base_time, max_time = __check_time(request_list)
+        base_time, max_time = __calculate_time(request_list)
+        if base_time >= 170.0:
+            raise ValueError('Request execute time too long')
         return True, 'Your input is valid, base time is ' + str(base_time) + ', max time is ' + str(max_time)
     except ValueError as e:
         return False, str(e)

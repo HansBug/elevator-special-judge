@@ -2,6 +2,7 @@ import json
 import re
 
 from aes import decrypt
+from check import get_base_and_max_time
 from model import Elevator
 from parse import parse_input, parse_output
 
@@ -90,7 +91,8 @@ def __simulate_passenger_out(**kwargs):
     elevator.leave_passenger(passenger, floor, time)
 
 
-def judge(input_list, output_list):
+def judge(input_list, output_list, check_max_time=False):
+    base_time, max_time = get_base_and_max_time(input_list)
     elevator = Elevator()
     try:
         passenger_dict, state_list, output_list = __initialize(input_list, output_list)
@@ -112,10 +114,12 @@ def judge(input_list, output_list):
         except ValueError as e:
             return False, str(e), output_list
     return (True, ACCEPTED, output_list) if \
-        not elevator.serving() and all([True if
-                                        not passenger.in_elevator and passenger.floor == passenger.target
-                                        else False
-                                        for passenger in passenger_dict.values()]) \
+        not elevator.serving() and \
+        elevator.time <= (max_time if check_max_time else 200.0) and \
+        all([True if
+             not passenger.in_elevator and passenger.floor == passenger.target
+             else False
+             for passenger in passenger_dict.values()]) \
         else (False, WRONG_ANSWER, output_list)
 
 
