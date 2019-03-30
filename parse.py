@@ -7,7 +7,7 @@ def parse_input(request):
     pattern = re.compile(r'\[\s*(\d+\.\d+)\](\d+)-FROM-(\d+)-TO-(\d+)')
     matcher = re.match(pattern, request)
     if not matcher:
-        raise ValueError('Invalid Input')
+        raise ValueError('Invalid Input: ' + request)
     time = float(matcher.group(1))
     pid = int(matcher.group(2))
     start = int(matcher.group(3))
@@ -22,7 +22,7 @@ def parse_output(state):
         pattern = re.compile(time_pattern + r'OPEN-(\d+)')
         matcher = re.match(pattern, _state)
         if not matcher:
-            raise ValueError('Invalid Elevator OPEN State')
+            raise ValueError('Invalid Elevator OPEN State: ' + state)
         time = float(matcher.group(1))
         floor = int(matcher.group(2))
         return {'time': time, 'state': 'OPEN', 'floor': floor}
@@ -31,7 +31,7 @@ def parse_output(state):
         pattern = re.compile(time_pattern + r'CLOSE-(\d+)')
         matcher = re.match(pattern, _state)
         if not matcher:
-            raise ValueError('Invalid Elevator CLOSE State')
+            raise ValueError('Invalid Elevator CLOSE State: ' + state)
         time = float(matcher.group(1))
         floor = int(matcher.group(2))
         return {'time': time, 'state': 'CLOSE', 'floor': floor}
@@ -40,7 +40,7 @@ def parse_output(state):
         pattern = re.compile(time_pattern + r'IN-(\d+)-(\d+)')
         matcher = re.match(pattern, _state)
         if not matcher:
-            raise ValueError('Invalid Passenger IN State')
+            raise ValueError('Invalid Passenger IN State: ' + state)
         time = float(matcher.group(1))
         pid = int(matcher.group(2))
         floor = int(matcher.group(3))
@@ -50,7 +50,7 @@ def parse_output(state):
         pattern = re.compile(time_pattern + r'OUT-(\d+)-(\d+)')
         matcher = re.match(pattern, _state)
         if not matcher:
-            raise ValueError('Invalid Passenger OUT State')
+            raise ValueError('Invalid Passenger OUT State: ' + state)
         time = float(matcher.group(1))
         pid = int(matcher.group(2))
         floor = int(matcher.group(3))
@@ -65,7 +65,7 @@ def parse_output(state):
 
     state_keywords = re.findall(r'[A-Z]+', state)
     if not state_keywords or state_keywords[0] not in parse_mapper:
-        raise ValueError('Invalid State')
+        raise ValueError('Invalid State: ' + state)
     return parse_mapper[state_keywords[0]](state)
 
 
