@@ -12,7 +12,7 @@ WRONG_ANSWER = 'Your answer does not meet the final requirements.' \
                'Or maybe the elevator\'s door is not closed.'
 
 
-def __decrypt_aes(encrypted, do_it=False):
+def __decrypt_aes(encrypted, do_it=True):
     pattern = re.compile(r'^\[\s*\d+\.\d+\](.*)')
     matcher = re.match(pattern, encrypted)
     cipher = matcher.group(1)
