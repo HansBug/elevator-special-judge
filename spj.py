@@ -20,7 +20,7 @@ if __name__ == '__main__':
         _content = ''
     else:
         _message = message_and_content[0]
-        _content = message_and_content[1]
+        _content = message_and_content[1] + '\n'
     _content += 'Your real output is listed as follows:\n'
     for output in decrypted_output_list:
         _content += output + '\n'
