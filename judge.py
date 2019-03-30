@@ -64,7 +64,7 @@ def __simulate_passenger_in(**kwargs):
     floor = state['floor']
     if pid not in passenger_dict:
         raise ValueError(' '.join([
-            'Wrong State |'
+            'Wrong State |',
             'Passenger',
             str(pid),
             'cannot enter the elevator',
@@ -83,7 +83,7 @@ def __simulate_passenger_out(**kwargs):
     floor = state['floor']
     if pid not in passenger_dict:
         raise ValueError(' '.join([
-            'Wrong State |'
+            'Wrong State |',
             'Passenger',
             str(pid),
             'cannot leave the elevator',

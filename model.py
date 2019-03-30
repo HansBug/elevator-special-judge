@@ -27,7 +27,7 @@ class Passenger:
     def enter_elevator(self, enter_floor):
         if self.__in_elevator:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Passenger',
                 str(self.__pid),
                 'cannot enter the elevator twice at floor',
@@ -35,7 +35,7 @@ class Passenger:
             ]))
         if self.__floor != enter_floor:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Passenger',
                 str(self.__pid),
                 'cannot enter the elevator',
@@ -47,7 +47,7 @@ class Passenger:
     def leave_elevator(self, leave_floor):
         if not self.__in_elevator:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Passenger',
                 str(self.__pid),
                 'cannot leave the elevator twice at floor',
@@ -88,7 +88,7 @@ class Elevator:
     def enter_passenger(self, passenger, floor, time):
         if passenger.pid in self.__passengers:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Passenger',
                 str(passenger.pid),
                 'already in the elevator',
@@ -96,7 +96,7 @@ class Elevator:
             ]))
         if self.__state != Elevator.State.SERVING:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Passenger',
                 str(passenger.pid),
                 'cannot enter the elevator',
@@ -104,7 +104,7 @@ class Elevator:
             ]))
         if floor != self.__floor:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Passenger',
                 str(passenger.pid),
                 'cannot enter the elevator',
@@ -116,7 +116,7 @@ class Elevator:
     def leave_passenger(self, passenger, floor, time):
         if passenger.pid not in self.__passengers:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Passenger',
                 str(passenger.pid),
                 'not in the elevator',
@@ -124,7 +124,7 @@ class Elevator:
             ]))
         if self.__state != Elevator.State.SERVING:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Passenger',
                 str(passenger.pid),
                 'cannot leave the elevator',
@@ -132,7 +132,7 @@ class Elevator:
             ]))
         if floor != self.__floor:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Passenger',
                 str(passenger.pid),
                 'cannot leave the elevator',
@@ -144,7 +144,7 @@ class Elevator:
     def judge_run_speed(self, floor, time):
         if time - self.__time < abs(floor - self.__floor) * Elevator.run_timespan:
             raise ValueError(' '.join([
-                'Time Error |'
+                'Time Error |',
                 'Elevator runs from floor',
                 str(self.__floor),
                 'to floor',
@@ -156,7 +156,7 @@ class Elevator:
     def judge_serve_speed(self, floor, time):
         if time - self.__time < Elevator.serve_timespan:
             raise ValueError(' '.join([
-                'Time Error |'
+                'Time Error |',
                 'Elevator serves too fast at floor',
                 str(floor)
             ]))
@@ -165,7 +165,7 @@ class Elevator:
     def open(self, floor, time):
         if self.__state == Elevator.State.SERVING:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Elevator cannot open twice at floor',
                 str(self.__floor)
             ]))
@@ -177,12 +177,12 @@ class Elevator:
     def close(self, floor, time):
         if floor != self.__floor:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Elevator cannot open and close at different floors'
             ]))
         if self.__state != Elevator.State.SERVING:
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'Elevator cannot close twice at floor',
                 str(self.__floor)
             ]))
