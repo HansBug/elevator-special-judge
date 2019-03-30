@@ -3,55 +3,55 @@ from enum import Enum, unique
 
 class Passenger:
     def __init__(self, pid, start, target):
-        self._pid = pid
-        self._floor = start
-        self._target = target
-        self._in_elevator = False
+        self.__pid = pid
+        self.__floor = start
+        self.__target = target
+        self.__in_elevator = False
 
     @property
     def pid(self):
-        return self._pid
+        return self.__pid
 
     @property
     def floor(self):
-        return self._floor
+        return self.__floor
 
     @property
     def target(self):
-        return self._target
+        return self.__target
 
     @property
     def in_elevator(self):
-        return self._in_elevator
+        return self.__in_elevator
 
     def enter_elevator(self, enter_floor):
-        if self._in_elevator:
+        if self.__in_elevator:
             raise ValueError(' '.join([
                 'Passenger',
-                str(self._pid),
+                str(self.__pid),
                 'cannot enter the elevator twice at floor',
                 str(enter_floor)
             ]))
-        if self._floor != enter_floor:
+        if self.__floor != enter_floor:
             raise ValueError(' '.join([
                 'Passenger',
-                str(self._pid),
+                str(self.__pid),
                 'cannot enter the elevator',
                 'at another floor'
             ]))
-        self._floor = enter_floor
-        self._in_elevator = True
+        self.__floor = enter_floor
+        self.__in_elevator = True
 
     def leave_elevator(self, leave_floor):
-        if not self._in_elevator:
+        if not self.__in_elevator:
             raise ValueError(' '.join([
                 'Passenger',
-                str(self._pid),
+                str(self.__pid),
                 'cannot leave the elevator twice at floor',
                 str(leave_floor)
             ]))
-        self._floor = leave_floor
-        self._in_elevator = False
+        self.__floor = leave_floor
+        self.__in_elevator = False
 
 
 class Elevator:
@@ -65,39 +65,39 @@ class Elevator:
         SERVING = 2
 
     def __init__(self):
-        self._floor = 1
-        self._time = 0.0
-        self._state = Elevator.State.STOPPED
-        self._passengers = {}
+        self.__floor = 1
+        self.__time = 0.0
+        self.__state = Elevator.State.STOPPED
+        self.__passengers = {}
 
     @property
     def floor(self):
-        return self._floor
+        return self.__floor
 
     @property
     def time(self):
-        return self._time
+        return self.__time
 
     @property
     def state(self):
-        return self._state
+        return self.__state
 
     def enter_passenger(self, passenger, floor, time):
-        if passenger.pid in self._passengers:
+        if passenger.pid in self.__passengers:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
                 'already in the elevator',
                 'so he/she cannot get in'
             ]))
-        if self._state != Elevator.State.SERVING:
+        if self.__state != Elevator.State.SERVING:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
                 'cannot enter the elevator',
                 'when the elevator is not serving'
             ]))
-        if floor != self._floor:
+        if floor != self.__floor:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
@@ -105,24 +105,24 @@ class Elevator:
                 'at a different floor floor'
             ]))
         passenger.enter_elevator(floor)
-        self._passengers[passenger.pid] = passenger
+        self.__passengers[passenger.pid] = passenger
 
     def leave_passenger(self, passenger, floor, time):
-        if passenger.pid not in self._passengers:
+        if passenger.pid not in self.__passengers:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
                 'not in the elevator',
                 'so he/she cannot get out'
             ]))
-        if self._state != Elevator.State.SERVING:
+        if self.__state != Elevator.State.SERVING:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
                 'cannot leave the elevator',
                 'when the elevator is not serving'
             ]))
-        if floor != self._floor:
+        if floor != self.__floor:
             raise ValueError(' '.join([
                 'Passenger',
                 str(passenger.pid),
@@ -130,13 +130,13 @@ class Elevator:
                 'at a different floor floor'
             ]))
         passenger.leave_elevator(floor)
-        del self._passengers[passenger.pid]
+        del self.__passengers[passenger.pid]
 
     def judge_run_speed(self, floor, time):
-        if time - self._time < abs(floor - self._floor) * Elevator.run_timespan:
+        if time - self.__time < abs(floor - self.__floor) * Elevator.run_timespan:
             raise ValueError(' '.join([
                 'Elevator runs from floor',
-                str(self._floor),
+                str(self.__floor),
                 'to floor',
                 str(floor),
                 'too fast'
@@ -144,7 +144,7 @@ class Elevator:
         return True
 
     def judge_serve_speed(self, floor, time):
-        if time - self._time < Elevator.serve_timespan:
+        if time - self.__time < Elevator.serve_timespan:
             raise ValueError(' '.join([
                 'Elevator serves too fast at floor',
                 str(floor)
@@ -152,29 +152,29 @@ class Elevator:
         return True
 
     def open(self, floor, time):
-        if self._state == Elevator.State.SERVING:
+        if self.__state == Elevator.State.SERVING:
             raise ValueError(' '.join([
                 'Elevator cannot open twice at floor',
-                str(self._floor)
+                str(self.__floor)
             ]))
         if self.judge_run_speed(floor, time):
-            self._state = Elevator.State.SERVING
-            self._floor = floor
-            self._time = time
+            self.__state = Elevator.State.SERVING
+            self.__floor = floor
+            self.__time = time
 
     def close(self, floor, time):
-        if floor != self._floor:
+        if floor != self.__floor:
             raise ValueError(' '.join([
                 'Elevator cannot open and close at different floors'
             ]))
-        if self._state != Elevator.State.SERVING:
+        if self.__state != Elevator.State.SERVING:
             raise ValueError(' '.join([
                 'Elevator cannot close twice at floor',
-                str(self._floor)
+                str(self.__floor)
             ]))
         if self.judge_serve_speed(floor, time):
-            self._state = Elevator.State.RUNNING
-            self._time = time
+            self.__state = Elevator.State.RUNNING
+            self.__time = time
 
     def serving(self):
-        return self._state == Elevator.State.SERVING
+        return self.__state == Elevator.State.SERVING

@@ -3,10 +3,10 @@ import binascii
 
 from Crypto.Cipher import AES
 
-_key = b"#I88--_NrPAqCm9N"
+__key = b"#I88--_NrPAqCm9N"
 
 
-def _base64_decode(s):
+def __base64_decode(s):
     try:
         return base64.urlsafe_b64decode(s)
     except binascii.Error:
@@ -20,14 +20,14 @@ def _base64_decode(s):
         return base64.urlsafe_b64decode(s)
 
 
-def unpad(s):
+def __unpad(s):
     return s[:-ord(s[len(s) - 1:])]
 
 
 def decrypt(encrypted_with_iv):
-    encrypted_with_iv = _base64_decode(encrypted_with_iv)
+    encrypted_with_iv = __base64_decode(encrypted_with_iv)
     iv = encrypted_with_iv[:16]
     encrypted = encrypted_with_iv[16:]
-    decrypt_helper = AES.new(_key, AES.MODE_CFB, iv, segment_size=128)
-    decrypted = unpad(decrypt_helper.decrypt(encrypted))
+    decrypt_helper = AES.new(__key, AES.MODE_CFB, iv, segment_size=128)
+    decrypted = __unpad(decrypt_helper.decrypt(encrypted))
     return bytes.decode(decrypted).strip()

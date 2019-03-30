@@ -11,7 +11,7 @@ WRONG_ANSWER = 'Your answer does not meet the final requirements.' \
                'Or maybe the elevator\'s door is not closed.'
 
 
-def decrypt_aes(encrypted, do_it=False):
+def __decrypt_aes(encrypted, do_it=False):
     pattern = re.compile(r'^\[\s*\d+\.\d+\](.*)')
     matcher = re.match(pattern, encrypted)
     cipher = matcher.group(1)
@@ -28,8 +28,8 @@ def decrypt_aes(encrypted, do_it=False):
         return cipher
 
 
-def _initialize(input_list, output_list):
-    output_list = [decrypt_aes(output_line) for output_line in output_list]
+def __initialize(input_list, output_list):
+    output_list = [__decrypt_aes(output_line) for output_line in output_list]
     passenger_list = [parse_input(request) for request in input_list]
     state_list = [parse_output(state) for state in output_list]
     # passenger_list.sort(key=lambda e: e['time']) 暂时用不到，不过之后也许会用到
@@ -38,7 +38,7 @@ def _initialize(input_list, output_list):
     return passenger_dict, state_list, output_list
 
 
-def _simulate_elevator_open(**kwargs):
+def __simulate_elevator_open(**kwargs):
     elevator = kwargs['elevator']
     state = kwargs['state']
     time = state['time']
@@ -46,7 +46,7 @@ def _simulate_elevator_open(**kwargs):
     elevator.open(floor, time)
 
 
-def _simulate_elevator_close(**kwargs):
+def __simulate_elevator_close(**kwargs):
     elevator = kwargs['elevator']
     state = kwargs['state']
     time = state['time']
@@ -54,7 +54,7 @@ def _simulate_elevator_close(**kwargs):
     elevator.close(floor, time)
 
 
-def _simulate_passenger_in(**kwargs):
+def __simulate_passenger_in(**kwargs):
     elevator = kwargs['elevator']
     passenger_dict = kwargs['passenger_dict']
     state = kwargs['state']
@@ -72,7 +72,7 @@ def _simulate_passenger_in(**kwargs):
     elevator.enter_passenger(passenger, floor, time)
 
 
-def _simulate_passenger_out(**kwargs):
+def __simulate_passenger_out(**kwargs):
     elevator = kwargs['elevator']
     passenger_dict = kwargs['passenger_dict']
     state = kwargs['state']
@@ -93,14 +93,14 @@ def _simulate_passenger_out(**kwargs):
 def judge(input_list, output_list):
     elevator = Elevator()
     try:
-        passenger_dict, state_list, output_list = _initialize(input_list, output_list)
+        passenger_dict, state_list, output_list = __initialize(input_list, output_list)
     except ValueError as e:
         return False, str(e), output_list
     simulate_mapper = {
-        'OPEN': _simulate_elevator_open,
-        'CLOSE': _simulate_elevator_close,
-        'IN': _simulate_passenger_in,
-        'OUT': _simulate_passenger_out
+        'OPEN': __simulate_elevator_open,
+        'CLOSE': __simulate_elevator_close,
+        'IN': __simulate_passenger_in,
+        'OUT': __simulate_passenger_out
     }
     for state in state_list:
         try:

@@ -4,7 +4,7 @@ import random
 import re
 
 
-def _parse_input(request):
+def __parse_input(request):
     pattern = re.compile(r'^\[(\d+\.\d)\](\d+)-FROM-(\d+)-TO-(\d+)$')
     matcher = re.match(pattern, request)
     if not matcher:
@@ -16,7 +16,7 @@ def _parse_input(request):
     return {'time': time, 'pid': pid, 'start': start, 'end': end, 'original': request}
 
 
-def _check_validity(request_list):
+def __check_validity(request_list):
     last_time = 0.0
     valid_request_count = 0
     pid_dict = {}
@@ -41,7 +41,7 @@ def _check_validity(request_list):
         raise ValueError('Too many valid requests')
 
 
-def _check_time(request_list):
+def __calculate_time(request_list):
     base_run_timespan = 0.5
     base_serve_timespan = 0.5
     run_timespan_disturb = 0.05
@@ -77,19 +77,33 @@ def _check_time(request_list):
             floor = request_end_floor
         if time > max_time:
             max_time = time
-    if max_time >= 170.0:
+    return max_time
+
+
+def __check_time(request_list):
+    time = __calculate_time(request_list)
+    if time >= 170.0:
         raise ValueError('Request execute time too long')
-    return math.ceil(max_time), math.ceil(max(max_time + 5, 1.1 * max_time))
+    return math.ceil(time), math.ceil(max(time + 5, 1.1 * time))
 
 
-def _check_input_validity(request_list):
+def __parse_request_list(input_list):
+    return [__parse_input(request.rstrip()) for request in input_list]
+
+
+def __check_input_validity(input_list):
     try:
-        request_list = [_parse_input(request.rstrip()) for request in request_list]
-        _check_validity(request_list)
-        base_time, max_time = _check_time(request_list)
+        request_list = __parse_request_list(input_list)
+        __check_validity(request_list)
+        base_time, max_time = __check_time(request_list)
         return True, 'Your input is valid, base time is ' + str(base_time) + ', max time is ' + str(max_time)
     except ValueError as e:
         return False, str(e)
+
+
+def get_base_and_max_time(input_list):
+    request_list = __parse_request_list(input_list)
+    return __calculate_time(request_list)
 
 
 def check(input_file_path):
@@ -99,7 +113,7 @@ def check(input_file_path):
     with open(input_file_path) as f:
         for line in f:
             input_list.append(line)
-        return _check_input_validity(input_list)
+        return __check_input_validity(input_list)
 
 
 if __name__ == '__main__':
