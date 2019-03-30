@@ -6,10 +6,11 @@ from check import get_base_and_max_time
 from model import Elevator
 from parse import parse_input, parse_output
 
-ACCEPTED = 'Your answer is correct'
-WRONG_ANSWER = 'Your answer does not meet the final requirements.' \
-               'Some passengers are still in the elevator or not arrived at their target floor yet.' \
-               'Or maybe the elevator\'s door is not closed.'
+ACCEPTED = 'Accepted | Your answer is correct'
+WRONG_ANSWER = 'Wrong Answer | Your answer does not meet the final requirements. ' \
+               'Some passengers are still in the elevator or not arrived at their target floor yet. ' \
+               'Or maybe the elevator\'s door is not closed. ' \
+               'Or your program exceeded max time limit'
 
 
 def __decrypt_aes(encrypted, do_it=True):
@@ -22,9 +23,9 @@ def __decrypt_aes(encrypted, do_it=True):
             plain_json = json.loads(plain)
             return plain_json['content']
         except Exception:
-            raise ValueError('Unexpected encryption error occurred. '
-                             'If you are not trying to hack the judge system, '
-                             'please contact the course staff for a solution.')
+            raise ValueError('Encryption Error | Unexpected encryption error occurred. '
+                             'You might have printed some redundant outputs to stdout. '
+                             'Please make sure that all your outputs are printed by TimableOutput.')
     else:
         return cipher
 
@@ -63,6 +64,7 @@ def __simulate_passenger_in(**kwargs):
     floor = state['floor']
     if pid not in passenger_dict:
         raise ValueError(' '.join([
+            'Wrong State |'
             'Passenger',
             str(pid),
             'cannot enter the elevator',
@@ -81,6 +83,7 @@ def __simulate_passenger_out(**kwargs):
     floor = state['floor']
     if pid not in passenger_dict:
         raise ValueError(' '.join([
+            'Wrong State |'
             'Passenger',
             str(pid),
             'cannot leave the elevator',

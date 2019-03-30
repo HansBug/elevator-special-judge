@@ -14,9 +14,16 @@ if __name__ == '__main__':
     _correct, _message, decrypted_output_list = judge(input_list, output_list, _data['check_max_time'])
     _score = 100 if _correct else 0
 
-    _content = 'Your real output is listed as follows:\n'
+    message_and_content = _message.split(' | ')
+    if len(message_and_content) != 2:
+        _message = _message
+        _content = ''
+    else:
+        _message = message_and_content[0]
+        _content = message_and_content[1]
+    _content += 'Your real output is listed as follows:\n'
     for output in decrypted_output_list:
-        _content += '\t' + output + '\n'
+        _content += output + '\n'
 
     _output_data = {}
 
