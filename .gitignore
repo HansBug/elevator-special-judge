@@ -1,3 +1,10 @@
+# for personal test
+/dist
+/build
+__pycache__
+/release/datacheck_in.txt
+/release/datacheck_out.txt
+
 
 # Created by https://www.gitignore.io/api/python,pycharm
 # Edit at https://www.gitignore.io/?templates=python,pycharm
