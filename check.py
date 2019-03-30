@@ -28,7 +28,7 @@ def _check_validity(request_list):
             raise ValueError('Request pid repeated: ' + original)
         if request['pid'] < 0 or request['pid'] > 2147483647:
             raise ValueError('Request pid out pf range: ' + original)
-        if request['start'] > 15 or request['end'] > 15:
+        if request['start'] < 1 or request['start'] > 15 or request['end'] < 1 or request['end'] > 15:
             raise ValueError('Request floor out of range: ' + original)
         if request['start'] == request['end']:
             raise ValueError('Request has same start and end: ' + original)
