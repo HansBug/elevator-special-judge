@@ -7,7 +7,7 @@ def _parse_input(request):
     pattern = re.compile(r'^\[(\d+\.\d)\](\d+)-FROM-(\d+)-TO-(\d+)$')
     matcher = re.match(pattern, request)
     if not matcher:
-        raise ValueError('Invalid Input: ' + request)
+        raise ValueError('Invalid Input Form: ' + request)
     time = float(matcher.group(1))
     pid = int(matcher.group(2))
     start = int(matcher.group(3))
