@@ -1,6 +1,6 @@
 information:
-  name: elevator_1_weak_5
-  case_id: elevator_1_weak_5_case_id
+  name: elevator_1_formal_weak_5
+  case_id: elevator_1_formal_weak_5_case_id
   options: {}
 run:
   input_file: stdin.txt
