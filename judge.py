@@ -1,4 +1,5 @@
 import json
+import math
 import re
 
 from aes import decrypt
@@ -98,7 +99,7 @@ def judge(input_list, output_list, check_max_time=False):
         output_list = list(map(__decrypt_aes, output_list))
         passenger_dict, state_list = __initialize(input_list, output_list)
     except ValueError as e:
-        return False, str(e), output_list
+        return False, str(e), output_list, 0
     simulate_mapper = {
         'OPEN': __simulate_elevator_open,
         'CLOSE': __simulate_elevator_close,
@@ -113,18 +114,18 @@ def judge(input_list, output_list, check_max_time=False):
                 passenger_dict=passenger_dict,
             )
         except ValueError as e:
-            return False, str(e), output_list
+            return False, str(e), output_list, 0
     if elevator.time > (max_time if check_max_time else 200.0):
-        return False, TIME_LIMIT_EXCEEDED, output_list
+        return False, TIME_LIMIT_EXCEEDED, output_list, 0
     if elevator.serving():
-        return False, WRONG_ANSWER + 'Your elevator\'s door is not closed', output_list
+        return False, WRONG_ANSWER + 'Your elevator\'s door is not closed', output_list, 0
     for passenger in passenger_dict.values():
         if passenger.in_elevator:
-            return False, WRONG_ANSWER + 'Passenger ' + str(passenger.pid) + ' is still in the elevator', output_list
+            return False, WRONG_ANSWER + 'Passenger ' + str(passenger.pid) + ' is still in the elevator', output_list, 0
         if passenger.floor != passenger.target:
             return False, WRONG_ANSWER + 'Passenger ' + \
-                   str(passenger.pid) + ' has not arrived at his/her target floor yet', output_list
-    return True, ACCEPTED, output_list
+                   str(passenger.pid) + ' has not arrived at his/her target floor yet', output_list, 0
+    return True, ACCEPTED, output_list, math.ceil(elevator.time)
 
 
 def open_file(input_file, output_file):
