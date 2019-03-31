@@ -60,6 +60,7 @@ class Passenger:
 class Elevator:
     run_timespan = 0.5
     serve_timespan = 0.5
+    eps = 1e-8
 
     @unique
     class State(Enum):
@@ -142,7 +143,7 @@ class Elevator:
         del self.__passengers[passenger.pid]
 
     def judge_run_speed(self, floor, time):
-        if time - self.__time < abs(floor - self.__floor) * Elevator.run_timespan:
+        if time - self.__time + Elevator.eps < abs(floor - self.__floor) * Elevator.run_timespan:
             raise ValueError(' '.join([
                 'Time Error |',
                 'Elevator runs from floor',
@@ -154,7 +155,7 @@ class Elevator:
         return True
 
     def judge_serve_speed(self, floor, time):
-        if time - self.__time < Elevator.serve_timespan:
+        if time - self.__time + Elevator.eps < Elevator.serve_timespan:
             raise ValueError(' '.join([
                 'Time Error |',
                 'Elevator serves too fast at floor',
