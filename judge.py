@@ -9,8 +9,8 @@ from parse import parse_input, parse_output
 ACCEPTED = 'Accepted | Your answer is correct'
 WRONG_ANSWER = 'Wrong Answer | Your answer does not meet the final requirements. \n' \
                'Some passengers are still in the elevator or not arrived at their target floor yet. \n' \
-               'Or maybe the elevator\'s door is not closed. \n' \
-               'Or your program exceeded max time limit'
+               'Or maybe the elevator\'s door is not closed.'
+TIME_LIMIT_EXCEEDED = 'Time Limit Exceeded | Your program exceeded max time limit.'
 
 
 def __decrypt_aes(encrypted, do_it=True):
@@ -116,9 +116,10 @@ def judge(input_list, output_list, check_max_time=False):
             )
         except ValueError as e:
             return False, str(e), output_list
+    if elevator.time > (max_time if check_max_time else 200.0):
+        return False, TIME_LIMIT_EXCEEDED, output_list
     return (True, ACCEPTED, output_list) if \
         not elevator.serving() and \
-        elevator.time <= (max_time if check_max_time else 200.0) and \
         all([True if
              not passenger.in_elevator and passenger.floor == passenger.target
              else False
