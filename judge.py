@@ -7,9 +7,9 @@ from model import Elevator
 from parse import parse_input, parse_output
 
 ACCEPTED = 'Accepted | Your answer is correct'
-WRONG_ANSWER = 'Wrong Answer | Your answer does not meet the final requirements. ' \
-               'Some passengers are still in the elevator or not arrived at their target floor yet. ' \
-               'Or maybe the elevator\'s door is not closed. ' \
+WRONG_ANSWER = 'Wrong Answer | Your answer does not meet the final requirements. \n' \
+               'Some passengers are still in the elevator or not arrived at their target floor yet. \n' \
+               'Or maybe the elevator\'s door is not closed. \n' \
                'Or your program exceeded max time limit'
 
 
