@@ -7,9 +7,7 @@ from model import Elevator
 from parse import parse_input, parse_output
 
 ACCEPTED = 'Accepted | Your answer is correct'
-WRONG_ANSWER = 'Wrong Answer | Your answer does not meet the final requirements. \n' \
-               'Some passengers are still in the elevator or not arrived at their target floor yet. \n' \
-               'Or maybe the elevator\'s door is not closed.'
+WRONG_ANSWER = 'Wrong Answer | '
 TIME_LIMIT_EXCEEDED = 'Time Limit Exceeded | Your program exceeded max time limit.'
 
 
@@ -118,13 +116,15 @@ def judge(input_list, output_list, check_max_time=False):
             return False, str(e), output_list
     if elevator.time > (max_time if check_max_time else 200.0):
         return False, TIME_LIMIT_EXCEEDED, output_list
-    return (True, ACCEPTED, output_list) if \
-        not elevator.serving() and \
-        all([True if
-             not passenger.in_elevator and passenger.floor == passenger.target
-             else False
-             for passenger in passenger_dict.values()]) \
-        else (False, WRONG_ANSWER, output_list)
+    if elevator.serving():
+        return False, WRONG_ANSWER + 'Your elevator\'s door is not closed', output_list
+    for passenger in passenger_dict.values():
+        if passenger.in_elevator:
+            return False, WRONG_ANSWER + 'Passenger ' + str(passenger.pid) + ' is still in the elevator', output_list
+        if passenger.floor != passenger.target:
+            return False, WRONG_ANSWER + 'Passenger ' + \
+                   str(passenger.pid) + ' has not arrived at his/her target floor yet', output_list
+    return True, ACCEPTED, output_list
 
 
 def open_file(input_file, output_file):
