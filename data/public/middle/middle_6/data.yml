@@ -1,0 +1,20 @@
+information:
+  name: elevator_1_middle_6
+  case_id: elevator_1_middle_6_case_id
+  options: {}
+run:
+  input_file: stdin.txt
+  type: interact
+  limits:
+    max_output_size: 134217728
+    max_process_number:
+    max_real_time: 210
+    max_cpu_time: 210.0
+    max_memory: 805306368
+    max_stack: 805306368
+test:
+  prefix:
+    - python3
+    - ../../../../spj.py
+  data:
+    check_max_time: false
