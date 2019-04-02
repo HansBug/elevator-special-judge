@@ -16,7 +16,7 @@ def parse_input(request):
 
 
 def parse_output(state):
-    time_pattern = r'\[\s*(\d+\.\d+)\]'
+    time_pattern = r'\[\s*(\d+\.\d{4})\]'
 
     def parse_elevator_open(_state):
         pattern = re.compile(time_pattern + r'OPEN-(\d+)')

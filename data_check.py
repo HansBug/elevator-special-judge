@@ -1,7 +1,7 @@
 from dcmodule import load_with_args, result_dump
 
 from check import __check_input_validity
-from judge import judge
+from judge import judge, __initialize
 
 
 def input_check(_stdin):
@@ -9,6 +9,12 @@ def input_check(_stdin):
 
 
 def output_check(_stdin, _stdout):
+    try:
+        _, state_list = __initialize(_stdin.splitlines(), _stdout.splitlines())
+        if sorted(state_list, key=lambda elem: elem['time']) != state_list:
+            raise ValueError('Output not sorted')
+    except ValueError:
+        return False
     return judge(_stdin.splitlines(), _stdout.splitlines(), decrypted=False)[0]
 
 
