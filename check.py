@@ -1,7 +1,8 @@
-import math
 import os
 import random
 import re
+
+import math
 
 
 def __parse_input(request):
@@ -37,6 +38,8 @@ def __check_validity(request_list):
         last_time = request['time']
         pid_dict[request['pid']] = request
         valid_request_count += 1
+    if valid_request_count < 1:
+        raise ValueError("There is no valid request")
     if valid_request_count > 30:
         raise ValueError('Too many valid requests')
 
