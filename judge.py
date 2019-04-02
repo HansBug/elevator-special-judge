@@ -99,6 +99,7 @@ def judge(input_list, output_list, check_max_time=False, decrypted=True):
         passenger_dict, state_list = __initialize(input_list, output_list)
     except ValueError as e:
         return False, str(e), output_list, 0
+    state_list.sort(key=lambda elem: elem['time'])
     simulate_mapper = {
         'OPEN': __simulate_elevator_open,
         'CLOSE': __simulate_elevator_close,
