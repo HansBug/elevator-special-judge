@@ -1,6 +1,7 @@
 import json
-import math
 import re
+
+import math
 
 from aes import decrypt
 from check import get_base_and_max_time
@@ -12,21 +13,18 @@ WRONG_ANSWER = 'Wrong Answer | '
 TIME_LIMIT_EXCEEDED = 'Time Limit Exceeded | Your program exceeded max time limit.'
 
 
-def __decrypt_aes(encrypted, do_it=True):
+def __decrypt_aes(encrypted):
     pattern = re.compile(r'^\[\s*\d+\.\d+\](.*)')
     matcher = re.match(pattern, encrypted)
     cipher = matcher.group(1)
-    if do_it:
-        try:
-            plain = decrypt(cipher)
-            plain_json = json.loads(plain)
-            return plain_json['content']
-        except Exception:
-            raise ValueError('Encryption Error | Unexpected encryption error occurred. '
-                             'You might have printed some redundant outputs to stdout. '
-                             'Please make sure that all your outputs are printed by TimableOutput.')
-    else:
-        return cipher
+    try:
+        plain = decrypt(cipher)
+        plain_json = json.loads(plain)
+        return plain_json['content']
+    except Exception:
+        raise ValueError('Encryption Error | Unexpected encryption error occurred. '
+                         'You might have printed some redundant outputs to stdout. '
+                         'Please make sure that all your outputs are printed by TimableOutput.')
 
 
 def __initialize(input_list, output_list):
@@ -92,11 +90,12 @@ def __simulate_passenger_out(**kwargs):
     elevator.leave_passenger(passenger, floor, time)
 
 
-def judge(input_list, output_list, check_max_time=False):
+def judge(input_list, output_list, check_max_time=False, decrypted=True):
     base_time, max_time = get_base_and_max_time(input_list)
     elevator = Elevator()
     try:
-        output_list = list(map(__decrypt_aes, output_list))
+        if decrypted:
+            output_list = list(map(__decrypt_aes, output_list))
         passenger_dict, state_list = __initialize(input_list, output_list)
     except ValueError as e:
         return False, str(e), output_list, 0
