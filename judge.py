@@ -100,7 +100,7 @@ def judge(input_list, output_list, check_max_time=False, decrypted=True):
     except ValueError as e:
         return False, str(e), output_list, 0
     state_list.sort(key=lambda elem: elem['time'])
-    output_list.sort(key=lambda elem: float(elem[1:10]))
+    output_list.sort(key=lambda elem: float(re.findall(r'\[\s*(\d+\.\d{4})\]', elem)[0]))
     simulate_mapper = {
         'OPEN': __simulate_elevator_open,
         'CLOSE': __simulate_elevator_close,
