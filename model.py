@@ -94,16 +94,22 @@ class Elevator:
         return self.__state
 
     def arrive(self, floor, time):
-        if abs(floor - self.__last_arrive_floor) != 1:
+        before_floor = self.__last_arrive_floor
+        after_floor = floor
+        if before_floor < 0:
+            before_floor += 1
+        if after_floor < 0:
+            after_floor += 1
+        if abs(after_floor - before_floor) != 1:
             raise ValueError(' '.join([
                 'Wrong State |',
-                'Elevator cannot cross over',
+                'Elevator cannot arrive',
                 'from floor',
                 str(self.__last_arrive_floor),
                 'to floor',
                 str(floor)
             ]))
-        if time - self.__last_arrive_time < Elevator.run_timespan:
+        if time - self.__last_arrive_time + Elevator.eps < Elevator.run_timespan:
             raise ValueError(' '.join([
                 'Wrong State |',
                 'Elevator arrives from floor',

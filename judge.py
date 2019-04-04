@@ -27,13 +27,30 @@ def __decrypt_aes(encrypted):
                          'Please make sure that all your outputs are printed by TimableOutput.')
 
 
+def __check_state_list_validity(state_list):
+    for state in state_list:
+        if not (-3 <= state['floor'] <= -1 or 1 <= state['floor'] <= 16):
+            raise ValueError(' '.join([
+                'There is no floor',
+                str(state['floor'])]))
+
+
 def __initialize(input_list, output_list):
     passenger_list = [parse_input(request) for request in input_list]
     state_list = [parse_output(state) for state in output_list]
     # passenger_list.sort(key=lambda e: e['time']) 暂时用不到，不过之后也许会用到
-    # state_list.sort(key=lambda e: e['time']) 输入数据确保时间单调不递减，暂时用不到
+    # state_list.sort(key=lambda e: e['time']) 输出数据确保时间单调不递减，暂时用不到
     passenger_dict = {passenger.pid: passenger for passenger in passenger_list}
+    __check_state_list_validity(state_list)
     return passenger_dict, state_list
+
+
+def __simulate_elevator_arrive(**kwargs):
+    elevator = kwargs['elevator']
+    state = kwargs['state']
+    time = state['time']
+    floor = state['floor']
+    elevator.arrive(floor, time)
 
 
 def __simulate_elevator_open(**kwargs):
@@ -105,7 +122,8 @@ def judge(input_list, output_list, check_max_time=False, decrypted=True):
         'OPEN': __simulate_elevator_open,
         'CLOSE': __simulate_elevator_close,
         'IN': __simulate_passenger_in,
-        'OUT': __simulate_passenger_out
+        'OUT': __simulate_passenger_out,
+        'ARRIVE': __simulate_elevator_arrive
     }
     for state in state_list:
         try:
