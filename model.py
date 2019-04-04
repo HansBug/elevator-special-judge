@@ -63,7 +63,7 @@ class Passenger:
 
 
 class Elevator:
-    run_timespan = 0.5
+    run_timespan = 0.4
     serve_timespan = 0.5
     eps = 1e-8
 
@@ -172,7 +172,13 @@ class Elevator:
         del self.__passengers[passenger.pid]
 
     def judge_run_speed(self, floor, time):
-        if time - self.__time + Elevator.eps < abs(floor - self.__floor) * Elevator.run_timespan:
+        before_floor = self.__floor
+        after_floor = floor
+        if before_floor < 0:
+            before_floor += 1
+        if after_floor < 0:
+            after_floor += 1
+        if time - self.__time + Elevator.eps < abs(after_floor - before_floor) * Elevator.run_timespan:
             raise ValueError(' '.join([
                 'Time Error |',
                 'Elevator runs from floor',
