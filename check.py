@@ -53,6 +53,7 @@ run_timespan_disturb = 0.04
 serve_timespan_disturb = 0.05
 request_time_disturb_upper_bound = 0.1
 request_time_disturb_lower_bound = -0.1
+basement_floor_count = 3
 
 
 def __simulate(request_list, run_timespan, serve_timespan):
@@ -73,23 +74,36 @@ def __simulate(request_list, run_timespan, serve_timespan):
             request['start'] += 1
         if request['end'] < 0:
             request['end'] += 1
-        request['start'] += 2
-        request['end'] += 2
-
-    def __update_time(_time, _start, _end):
-        base_time = _time
-        if not floor_time_checkpoints[_start]['served']:
-            floor_time_checkpoints[_start]['served'] = True
-            base_time += serve_timespan
-            floor_time_checkpoints[_start]['time'] = base_time
-        for i in range(min(_start, _end) + 1, max(_start, _end) + 1):
-            floor_time_checkpoints[i]['time'] = base_time + run_timespan * abs(i - _start)
-        if not floor_time_checkpoints[_end]['served']:
-            floor_time_checkpoints[_end]['served'] = True
-            floor_time_checkpoints[_end]['time'] += serve_timespan
+        request['start'] += basement_floor_count - 1
+        request['end'] += basement_floor_count - 1
 
     pickup_request_bundle = []
     last_request_finish_time = 0.0
+    floor = basement_floor_count
+
+    def __build_basic_time(_time, _start, _end):
+        base_time = _time + serve_timespan + run_timespan * abs(_start - floor)
+        floor_time_checkpoints[_start]['served'] = True
+        floor_time_checkpoints[_start]['time'] = base_time
+        for i in range(_start, _end, int(math.copysign(1, _end - _start))):
+            floor_time_checkpoints[i]['time'] = base_time + run_timespan * abs(i - _start)
+        floor_time_checkpoints[_end]['served'] = True
+        floor_time_checkpoints[_end]['time'] = base_time + run_timespan * abs(_end - _start) + serve_timespan
+
+    def __update_pickup_time(_start, _end, _main_end):
+        base_update_time = 0.0
+        if not floor_time_checkpoints[_start]['served']:
+            base_update_time += serve_timespan
+            floor_time_checkpoints[_start]['served'] = True
+        for i in range(_start, _end, int(math.copysign(1, _end - _start))):
+            floor_time_checkpoints[i]['time'] += base_update_time
+        if not floor_time_checkpoints[_end]['served']:
+            base_update_time += serve_timespan
+            floor_time_checkpoints[_end]['served'] = True
+        for i in range(_end, _main_end, int(math.copysign(1, _end - _start))):
+            floor_time_checkpoints[i]['time'] += base_update_time
+        floor_time_checkpoints[_main_end]['time'] += base_update_time
+
     while not all([request['served'] for request in request_list]):
         floor_time_checkpoints = [{'served': False, 'time': 0.0} for i in range(19)]
         if pickup_request_bundle:
@@ -100,17 +114,18 @@ def __simulate(request_list, run_timespan, serve_timespan):
         time = max(last_request_finish_time, main_request['time'])
         start = main_request['start']
         end = main_request['end']
-        __update_time(time, start, end)
+        __build_basic_time(time, start, end)
         while True:
             next_pickup_request = next((request for request in request_list
                                         if not request['served'] and
                                         request not in pickup_request_bundle and
+                                        request is not main_request and
                                         min(start, end) <= request['start'] < max(start, end) and
-                                        (end - start) * (request['end'] - request['start']) > 0), None)
+                                        (end - start) * (request['end'] - request['start']) > 0 and
+                                        request['time'] <= floor_time_checkpoints[request['start']]['time']), None)
             if not next_pickup_request:
                 break
-            __update_time(floor_time_checkpoints[next_pickup_request['start']]['time'],
-                          next_pickup_request['start'], next_pickup_request['end'])
+            __update_pickup_time(next_pickup_request['start'], next_pickup_request['end'], end)
             pickup_request_bundle.append(next_pickup_request)
         for request in pickup_request_bundle:
             if min(start, end) <= request['start'] < max(start, end):
@@ -118,6 +133,7 @@ def __simulate(request_list, run_timespan, serve_timespan):
         pickup_request_bundle = [request for request in pickup_request_bundle if not request['served']]
         main_request['served'] = True
         last_request_finish_time = floor_time_checkpoints[main_request['end']]['time']
+        floor = main_request['end']
 
     time = last_request_finish_time
     return time
@@ -131,7 +147,8 @@ def __calculate_time(request_list):
         time = __simulate(copy.deepcopy(request_list), run_timespan, serve_timespan)
         if time > max_time:
             max_time = time
-    return math.ceil(max_time), math.ceil(max(max_time + 5, 1.1 * max_time))
+    # return max_time, max(max_time + 3, 1.05 * max_time)
+    return math.ceil(max_time), math.ceil(max(max_time + 3, 1.05 * max_time))
 
 
 def __parse_request_list(input_list):
