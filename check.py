@@ -1,3 +1,4 @@
+import copy
 import os
 import random
 import re
@@ -14,7 +15,7 @@ def __parse_input(request):
     pid = int(matcher.group(2))
     start = int(matcher.group(3))
     end = int(matcher.group(4))
-    return {'time': time, 'pid': pid, 'start': start, 'end': end, 'original': request}
+    return {'time': time, 'pid': pid, 'start': start, 'end': end, 'served': False, 'original': request}
 
 
 def __check_validity(request_list):
@@ -58,7 +59,7 @@ def __simulate(request_list, run_timespan, serve_timespan):
     time = 0.0
     floor = 1
 
-    # add disturb to request coming time
+    # pre-treat requests: reset request time and add floor count to basement floors
     last_request_random_time = 0.0
     for index, request in enumerate(request_list):
         request_real_time = request['time']
@@ -71,7 +72,56 @@ def __simulate(request_list, run_timespan, serve_timespan):
                 last_request_random_time)
         last_request_random_time = request_time
         request['time'] = request_time
+        if request['start'] < 0:
+            request['start'] += 1
+        if request['end'] < 0:
+            request['end'] += 1
+        request['start'] += 2
+        request['end'] += 2
 
+    def __update_time(_time, _start, _end):
+        base_time = _time
+        if not floor_time_checkpoints[_start]['served']:
+            floor_time_checkpoints[_start]['served'] = True
+            base_time += serve_timespan
+            floor_time_checkpoints[_start]['time'] = base_time
+        for i in range(min(_start, _end) + 1, max(_start, _end) + 1):
+            floor_time_checkpoints[_start]['time'] = base_time + run_timespan * abs(i - _start)
+        if not floor_time_checkpoints[_end]['served']:
+            floor_time_checkpoints[_end]['served'] = True
+            floor_time_checkpoints[_end]['time'] += serve_timespan
+
+    current_request_bundle = []
+    last_request_finish_time = 0.0
+    while not all([request['served'] for request in request_list]):
+        floor_time_checkpoints = [{'served': False, 'time': 0.0}] * 19
+        if current_request_bundle:
+            main_request = current_request_bundle.pop(0)
+            current_request_bundle = []
+        else:
+            main_request = next(request for request in request_list if not request['served'])
+        time = max(last_request_finish_time, main_request['time'])
+        start = main_request['start']
+        end = main_request['end']
+        __update_time(time, start, end)
+        while True:
+            next_pickup_request = next((request for request in request_list
+                                        if not request['served'] and
+                                        request not in current_request_bundle and
+                                        min(start, end) < request['start'] < max(start, end) and
+                                        (end - start) * (request['end'] - request['start']) > 0), None)
+            if not next_pickup_request:
+                break
+            __update_time(floor_time_checkpoints[next_pickup_request['start']],
+                          next_pickup_request['start'], next_pickup_request['end'])
+            current_request_bundle.append(next_pickup_request)
+        for request in current_request_bundle:
+            if min(start, end) < request['start'] < max(start, end):
+                request['served'] = True
+        main_request['served'] = True
+        last_request_finish_time = floor_time_checkpoints[main_request['end']]['time']
+
+    time = last_request_finish_time
     return time
 
 
@@ -80,7 +130,7 @@ def __calculate_time(request_list):
     for i in range(500):
         run_timespan = base_run_timespan + random.uniform(0, run_timespan_disturb)
         serve_timespan = base_serve_timespan + random.uniform(0, serve_timespan_disturb)
-        time = __simulate(request_list, run_timespan, serve_timespan)
+        time = __simulate(copy.deepcopy(request_list), run_timespan, serve_timespan)
         if time > max_time:
             max_time = time
     return math.ceil(max_time), math.ceil(max(max_time + 5, 1.1 * max_time))
