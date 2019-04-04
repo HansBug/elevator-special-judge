@@ -56,9 +56,6 @@ request_time_disturb_lower_bound = -0.1
 
 
 def __simulate(request_list, run_timespan, serve_timespan):
-    time = 0.0
-    floor = 1
-
     # pre-treat requests: reset request time and add floor count to basement floors
     last_request_random_time = 0.0
     for index, request in enumerate(request_list):
@@ -86,18 +83,18 @@ def __simulate(request_list, run_timespan, serve_timespan):
             base_time += serve_timespan
             floor_time_checkpoints[_start]['time'] = base_time
         for i in range(min(_start, _end) + 1, max(_start, _end) + 1):
-            floor_time_checkpoints[_start]['time'] = base_time + run_timespan * abs(i - _start)
+            floor_time_checkpoints[i]['time'] = base_time + run_timespan * abs(i - _start)
         if not floor_time_checkpoints[_end]['served']:
             floor_time_checkpoints[_end]['served'] = True
             floor_time_checkpoints[_end]['time'] += serve_timespan
 
-    current_request_bundle = []
+    pickup_request_bundle = []
     last_request_finish_time = 0.0
     while not all([request['served'] for request in request_list]):
-        floor_time_checkpoints = [{'served': False, 'time': 0.0}] * 19
-        if current_request_bundle:
-            main_request = current_request_bundle.pop(0)
-            current_request_bundle = []
+        floor_time_checkpoints = [{'served': False, 'time': 0.0} for i in range(19)]
+        if pickup_request_bundle:
+            main_request = pickup_request_bundle.pop(0)
+            pickup_request_bundle = []
         else:
             main_request = next(request for request in request_list if not request['served'])
         time = max(last_request_finish_time, main_request['time'])
@@ -107,17 +104,18 @@ def __simulate(request_list, run_timespan, serve_timespan):
         while True:
             next_pickup_request = next((request for request in request_list
                                         if not request['served'] and
-                                        request not in current_request_bundle and
-                                        min(start, end) < request['start'] < max(start, end) and
+                                        request not in pickup_request_bundle and
+                                        min(start, end) <= request['start'] < max(start, end) and
                                         (end - start) * (request['end'] - request['start']) > 0), None)
             if not next_pickup_request:
                 break
-            __update_time(floor_time_checkpoints[next_pickup_request['start']],
+            __update_time(floor_time_checkpoints[next_pickup_request['start']]['time'],
                           next_pickup_request['start'], next_pickup_request['end'])
-            current_request_bundle.append(next_pickup_request)
-        for request in current_request_bundle:
-            if min(start, end) < request['start'] < max(start, end):
+            pickup_request_bundle.append(next_pickup_request)
+        for request in pickup_request_bundle:
+            if min(start, end) <= request['start'] < max(start, end):
                 request['served'] = True
+        pickup_request_bundle = [request for request in pickup_request_bundle if not request['served']]
         main_request['served'] = True
         last_request_finish_time = floor_time_checkpoints[main_request['end']]['time']
 
