@@ -76,6 +76,8 @@ class Elevator:
     def __init__(self):
         self.__floor = 1
         self.__time = 0.0
+        self.__last_arrive_floor = 1
+        self.__last_arrive_time = 0.0
         self.__state = Elevator.State.STOPPED
         self.__passengers = {}
 
@@ -90,6 +92,28 @@ class Elevator:
     @property
     def state(self):
         return self.__state
+
+    def arrive(self, floor, time):
+        if abs(floor - self.__last_arrive_floor) != 1:
+            raise ValueError(' '.join([
+                'Wrong State |',
+                'Elevator cannot cross over',
+                'from floor',
+                str(self.__last_arrive_floor),
+                'to floor',
+                str(floor)
+            ]))
+        if time - self.__last_arrive_time < Elevator.run_timespan:
+            raise ValueError(' '.join([
+                'Wrong State |',
+                'Elevator arrives from floor',
+                str(self.__last_arrive_floor),
+                'to',
+                str(floor),
+                'too fast'
+            ]))
+        self.__last_arrive_floor = floor
+        self.__last_arrive_time = time
 
     def enter_passenger(self, passenger, floor, time):
         if passenger.pid in self.__passengers:
@@ -174,6 +198,13 @@ class Elevator:
                 'Wrong State |',
                 'Elevator cannot open twice at floor',
                 str(self.__floor)
+            ]))
+        if floor != self.__last_arrive_floor:
+            raise ValueError(' '.join([
+                'Wrong State |',
+                'Elevator cannot open at floor',
+                str(floor),
+                'before it arrives'
             ]))
         if self.judge_run_speed(floor, time):
             self.__state = Elevator.State.SERVING
