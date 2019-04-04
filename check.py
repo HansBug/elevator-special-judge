@@ -6,7 +6,7 @@ import math
 
 
 def __parse_input(request):
-    pattern = re.compile(r'^\[(\d+\.\d)\](\d+)-FROM-(\d+)-TO-(\d+)$')
+    pattern = re.compile(r'^\[(\d+\.\d)\](\d+)-FROM-(-?[1-9]\d*)-TO-(-?[1-9]\d*)$')
     matcher = re.match(pattern, request)
     if not matcher:
         raise ValueError('Invalid Input Form: ' + request)

@@ -2,10 +2,11 @@ from enum import Enum, unique
 
 
 class Passenger:
-    def __init__(self, pid, start, target):
+    def __init__(self, pid, start, target, time):
         self.__pid = pid
         self.__floor = start
         self.__target = target
+        self.__time = time
         self.__in_elevator = False
 
     @property
@@ -19,6 +20,10 @@ class Passenger:
     @property
     def target(self):
         return self.__target
+
+    @property
+    def time(self):
+        return self.__time
 
     @property
     def in_elevator(self):

@@ -4,7 +4,7 @@ from model import Passenger
 
 
 def parse_input(request):
-    pattern = re.compile(r'\[\s*(\d+\.\d+)\](\d+)-FROM-(\d+)-TO-(\d+)')
+    pattern = re.compile(r'\[\s*(\d+\.\d+)\](\d+)-FROM-(-?[1-9]\d*)-TO-(-?[1-9]\d*)')
     matcher = re.match(pattern, request)
     if not matcher:
         raise ValueError('Input Format Error | Invalid Input: ' + request)
@@ -12,7 +12,7 @@ def parse_input(request):
     pid = int(matcher.group(2))
     start = int(matcher.group(3))
     end = int(matcher.group(4))
-    return time, Passenger(pid, start, end)
+    return Passenger(pid, start, end, time)
 
 
 def parse_output(state):
