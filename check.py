@@ -44,40 +44,47 @@ def __check_validity(request_list):
         raise ValueError('Too many valid requests')
 
 
+base_run_timespan = 0.5
+base_serve_timespan = 0.5
+run_timespan_disturb = 0.05
+serve_timespan_disturb = 0.05
+request_time_disturb_upper_bound = 0.1
+request_time_disturb_lower_bound = -0.1
+
+
+def __simulate(request_list, run_timespan, serve_timespan):
+    time = 0.0
+    floor = 1
+    last_request_random_time = 0.0
+    for index, request in enumerate(request_list):
+        request_real_time = request['time']
+        request_random_disturb = random.uniform(request_time_disturb_upper_bound, request_time_disturb_lower_bound)
+        if index == 0:
+            request_time = max(0, request_real_time + request_random_disturb)
+        else:
+            request_time = max(
+                max(last_request_random_time, request_real_time) + request_random_disturb,
+                last_request_random_time)
+        last_request_random_time = request_time
+        request_start_floor = request['start']
+        request_end_floor = request['end']
+        if request_time > time:
+            time = request_time
+        time += run_timespan * abs(request_start_floor - floor)
+        floor = request_start_floor
+        time += serve_timespan
+        time += run_timespan * abs(request_end_floor - floor)
+        time += serve_timespan
+        floor = request_end_floor
+    return time
+
+
 def __calculate_time(request_list):
-    base_run_timespan = 0.5
-    base_serve_timespan = 0.5
-    run_timespan_disturb = 0.05
-    serve_timespan_disturb = 0.05
-    request_time_disturb_upper_bound = 0.1
-    request_time_disturb_lower_bound = -0.1
     max_time = 0.0
     for i in range(500):
         run_timespan = base_run_timespan + random.uniform(0, run_timespan_disturb)
         serve_timespan = base_serve_timespan + random.uniform(0, serve_timespan_disturb)
-        time = 0.0
-        floor = 1
-        last_request_random_time = 0.0
-        for index, request in enumerate(request_list):
-            request_real_time = request['time']
-            request_random_disturb = random.uniform(request_time_disturb_upper_bound, request_time_disturb_lower_bound)
-            if index == 0:
-                request_time = max(0, request_real_time + request_random_disturb)
-            else:
-                request_time = max(
-                    max(last_request_random_time, request_real_time) + request_random_disturb,
-                    last_request_random_time)
-            last_request_random_time = request_time
-            request_start_floor = request['start']
-            request_end_floor = request['end']
-            if request_time > time:
-                time = request_time
-            time += run_timespan * abs(request_start_floor - floor)
-            floor = request_start_floor
-            time += serve_timespan
-            time += run_timespan * abs(request_end_floor - floor)
-            time += serve_timespan
-            floor = request_end_floor
+        time = __simulate(request_list, run_timespan, serve_timespan)
         if time > max_time:
             max_time = time
     return math.ceil(max_time), math.ceil(max(max_time + 5, 1.1 * max_time))
