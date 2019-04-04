@@ -29,8 +29,10 @@ def __check_validity(request_list):
             raise ValueError('Request pid repeated: ' + original)
         if request['pid'] < 0 or request['pid'] > 2147483647:
             raise ValueError('Request pid out pf range: ' + original)
-        if request['start'] < 1 or request['start'] > 15 or request['end'] < 1 or request['end'] > 15:
+        if request['start'] < -3 or request['start'] > 16 or request['end'] < -3 or request['end'] > 16:
             raise ValueError('Request floor out of range: ' + original)
+        if request['start'] == 0 or request['end'] == 0:
+            raise ValueError('Request floor cannot be zero')
         if request['start'] == request['end']:
             raise ValueError('Request has same start and end: ' + original)
         if request['time'] < last_time:
@@ -44,9 +46,9 @@ def __check_validity(request_list):
         raise ValueError('Too many valid requests')
 
 
-base_run_timespan = 0.5
+base_run_timespan = 0.4
 base_serve_timespan = 0.5
-run_timespan_disturb = 0.05
+run_timespan_disturb = 0.04
 serve_timespan_disturb = 0.05
 request_time_disturb_upper_bound = 0.1
 request_time_disturb_lower_bound = -0.1
@@ -55,6 +57,8 @@ request_time_disturb_lower_bound = -0.1
 def __simulate(request_list, run_timespan, serve_timespan):
     time = 0.0
     floor = 1
+
+    # add disturb to request coming time
     last_request_random_time = 0.0
     for index, request in enumerate(request_list):
         request_real_time = request['time']
@@ -66,16 +70,8 @@ def __simulate(request_list, run_timespan, serve_timespan):
                 max(last_request_random_time, request_real_time) + request_random_disturb,
                 last_request_random_time)
         last_request_random_time = request_time
-        request_start_floor = request['start']
-        request_end_floor = request['end']
-        if request_time > time:
-            time = request_time
-        time += run_timespan * abs(request_start_floor - floor)
-        floor = request_start_floor
-        time += serve_timespan
-        time += run_timespan * abs(request_end_floor - floor)
-        time += serve_timespan
-        floor = request_end_floor
+        request['time'] = request_time
+
     return time
 
 
