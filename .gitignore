@@ -4,6 +4,8 @@
 __pycache__
 /release/datacheck_in.txt
 /release/datacheck_out.txt
+/release/*.zip
+/release/*.rar
 
 
 # Created by https://www.gitignore.io/api/python,pycharm
