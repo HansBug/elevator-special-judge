@@ -64,7 +64,7 @@ class Passenger:
 
 class Elevator:
     run_timespan = 0.4
-    serve_timespan = 0.5
+    serve_timespan = 0.4
     eps = 1e-8
 
     @unique
