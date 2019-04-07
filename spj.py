@@ -9,9 +9,14 @@ if __name__ == '__main__':
     _error_file = _args.error_file
     _data = _args.data
 
+    if 'check_max_time' not in _data:
+        check_max_time = False
+    else:
+        check_max_time = _data['check_max_time']
+
     # Do the judge work
     input_list, output_list = open_file(_input_file, _output_file)
-    _correct, _message, decrypted_output_list, _score = judge(input_list, output_list, _data['check_max_time'])
+    _correct, _message, decrypted_output_list, _score = judge(input_list, output_list, check_max_time)
 
     message_and_content = _message.split(' | ')
     if len(message_and_content) != 2:

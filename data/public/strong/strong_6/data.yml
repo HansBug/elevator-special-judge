@@ -1,6 +1,6 @@
 information:
-  name: elevator_1_formal_strong_6
-  case_id: elevator_1_formal_strong_6_case_id
+  name: elevator_2_formal_strong_6
+  case_id: elevator_2_formal_strong_6_case_id
   options: {}
 run:
   input_file: stdin.txt
@@ -17,4 +17,4 @@ test:
     - python3
     - ../../../../spj.py
   data:
-    check_max_time: false
+    check_max_time: true

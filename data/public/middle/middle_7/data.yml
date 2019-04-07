@@ -1,6 +1,6 @@
 information:
-  name: elevator_1_formal_middle_7
-  case_id: elevator_1_formal_middle_7_case_id
+  name: elevator_2_formal_middle_7
+  case_id: elevator_2_formal_middle_7_case_id
   options: {}
 run:
   input_file: stdin.txt
