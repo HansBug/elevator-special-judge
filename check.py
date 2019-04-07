@@ -130,7 +130,7 @@ def __simulate(request_list, run_timespan, serve_timespan):
                                         if not request['served'] and
                                         request not in pickup_request_bundle and
                                         request is not main_request and
-                                        min(start, end) <= request['start'] < max(start, end) and
+                                        min(start, end) <= request['start'] <= max(start, end) and
                                         (end - start) * (request['end'] - request['start']) > 0 and
                                         request['time'] <= floor_time_checkpoints[request['start']]['time']), None)
             if not next_pickup_request:
@@ -140,7 +140,7 @@ def __simulate(request_list, run_timespan, serve_timespan):
                 else min(travel_end, next_pickup_request['end'])
             pickup_request_bundle.append(next_pickup_request)
         for request in pickup_request_bundle:
-            if min(start, end) <= request['start'] < max(start, end):
+            if min(start, end) <= request['start'] <= max(start, end):
                 request['served'] = True
         pickup_request_bundle = [request for request in pickup_request_bundle if not request['served']]
         main_request['served'] = True
