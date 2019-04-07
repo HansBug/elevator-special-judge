@@ -9,7 +9,7 @@ run:
     max_output_size: 134217728
     max_process_number:
     max_real_time: 101.0
-    max_cpu_time: 101.0
+    max_cpu_time: 10.0
     max_memory: 805306368
     max_stack: 805306368
 test:
