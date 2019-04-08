@@ -153,7 +153,7 @@ def __simulate(request_list, run_timespan, serve_timespan):
 
 def __calculate_time(request_list):
     max_time = 0.0
-    for i in range(500):
+    for i in range(5000):
         run_timespan = base_run_timespan + random.uniform(0, run_timespan_disturb)
         serve_timespan = base_serve_timespan + random.uniform(0, serve_timespan_disturb)
         time = __simulate(copy.deepcopy(request_list), run_timespan, serve_timespan)
