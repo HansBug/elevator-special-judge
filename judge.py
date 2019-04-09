@@ -1,8 +1,6 @@
 import json
 import re
 
-import math
-
 from aes import decrypt
 from check import get_base_and_max_time
 from model import Elevator
@@ -144,7 +142,7 @@ def judge(input_list, output_list, check_max_time=False, decrypted=True):
         if passenger.floor != passenger.target:
             return False, WRONG_ANSWER + 'Passenger ' + \
                    str(passenger.pid) + ' has not arrived at his/her target floor yet', output_list, 0
-    return True, ACCEPTED, output_list, math.ceil(elevator.time)
+    return True, ACCEPTED, output_list, elevator.time
 
 
 def open_file(input_file, output_file):
