@@ -160,7 +160,7 @@ def __calculate_time(request_list):
         if time > max_time:
             max_time = time
     # return max_time, max(max_time + 3, 1.05 * max_time)
-    return math.ceil(max_time), math.ceil(max(max_time + 3, 1.05 * max_time))
+    return math.ceil(max_time), math.ceil(max(max_time + 3, 1.05 * max_time)) + 5
 
 
 def __parse_request_list(input_list):
