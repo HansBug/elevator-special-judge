@@ -8,7 +8,7 @@ run:
   limits:
     max_output_size: 134217728
     max_process_number:
-    max_real_time: 29.0
+    max_real_time: 49.0
     max_cpu_time: 10.0
     max_memory: 805306368
     max_stack: 805306368
@@ -17,4 +17,4 @@ test:
     - python3
     - ../../../../spj.py
   data:
-    check_max_time: true
+    check_max_time: false
