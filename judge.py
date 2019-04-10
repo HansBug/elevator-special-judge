@@ -29,7 +29,7 @@ def __check_state_list_validity(state_list):
     for state in state_list:
         if not (-3 <= state['floor'] <= -1 or 1 <= state['floor'] <= 16):
             raise ValueError(' '.join([
-                'Wrong State |'
+                'Wrong State |',
                 'There is no floor',
                 str(state['floor'])]))
 
