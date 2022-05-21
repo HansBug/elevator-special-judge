@@ -13,8 +13,8 @@ def _remove_pretime(s: str) -> str:
     return match.group(1)
 
 
-def spj_func(stdin: io.TextIOBase, stdout: io.TextIOBase):
-    check_max_time = True
+def spj_func(stdin: io.TextIOBase, stdout: io.TextIOBase, check_max_time=None):
+    check_max_time = not not check_max_time
     need_decrypt = False
     no_pretime = True
 
