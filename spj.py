@@ -1,22 +1,32 @@
-from tmodule import *
+import io
+import re
 
-from judge import open_file, judge
+from pyspj import pyspj_entry
 
-if __name__ == '__main__':
-    _args = args_input
-    _input_file = _args.input_file
-    _output_file = _args.output_file
-    _error_file = _args.error_file
-    _data = _args.data
+from judge import judge
 
-    if 'check_max_time' not in _data:
-        check_max_time = False
-    else:
-        check_max_time = _data['check_max_time']
+PRETIME_PATTERN = re.compile(r'^\[\s*\d+\.\d+\](.*)')
 
-    # Do the judge work
-    input_list, output_list = open_file(_input_file, _output_file)
-    _correct, _message, decrypted_output_list, _score = judge(input_list, output_list, check_max_time)
+
+def _remove_pretime(s: str) -> str:
+    match = PRETIME_PATTERN.match(s)
+    return match.group(1)
+
+
+def spj_func(stdin: io.TextIOBase, stdout: io.TextIOBase):
+    check_max_time = True
+    need_decrypt = False
+    no_pretime = True
+
+    input_list = list(map(str.strip, stdin))
+    output_list = list(map(str.strip, stdout))
+    if no_pretime:
+        output_list = list(map(_remove_pretime, output_list))
+
+    _correct, _message, decrypted_output_list, _score = judge(
+        input_list, output_list,
+        check_max_time, need_decrypt
+    )
 
     message_and_content = _message.split(' | ')
     if len(message_and_content) != 2:
@@ -29,13 +39,13 @@ if __name__ == '__main__':
     for output in decrypted_output_list:
         _content += output + '\n'
 
-    _output_data = {}
+    return _correct, _message, _content
 
-    # Print judge result
-    print(ContinuityOutputResult(
-        correct=_correct,
-        score=_score,
-        message=_message,
-        content=_content,
-        data=_output_data
-    ))
+
+if __name__ == '__main__':
+    pyspj_entry(
+        'elevator-2-spj', spj_func,
+        version='0.0.1',  # optional
+        author='HansBug',  # optional
+        email='hansbug@buaa.edu.cn',  # optional
+    )()

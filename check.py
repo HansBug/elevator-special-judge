@@ -6,7 +6,7 @@ import re
 import math
 
 
-def __parse_input(request):
+def _parse_input(request):
     pattern = re.compile(r'^\[(\d+\.\d)\](\d+)-FROM-(-?[1-9]\d*)-TO-(-?[1-9]\d*)$')
     matcher = re.match(pattern, request)
     if not matcher:
@@ -18,7 +18,7 @@ def __parse_input(request):
     return {'time': time, 'pid': pid, 'start': start, 'end': end, 'served': False, 'original': request}
 
 
-def __check_validity(request_list):
+def _check_validity(request_list):
     last_time = 0.0
     valid_request_count = 0
     pid_dict = {}
@@ -56,7 +56,7 @@ request_time_disturb_lower_bound = -0.1
 basement_floor_count = 3
 
 
-def __simulate(request_list, run_timespan, serve_timespan):
+def _simulate(request_list, run_timespan, serve_timespan):
     # pre-treat requests: reset request time and add floor count to basement floors
     last_request_random_time = 0.0
     for index, request in enumerate(request_list):
@@ -151,27 +151,27 @@ def __simulate(request_list, run_timespan, serve_timespan):
     return time
 
 
-def __calculate_time(request_list):
+def _calculate_time(request_list):
     max_time = 0.0
     for i in range(5000):
         run_timespan = base_run_timespan + random.uniform(0, run_timespan_disturb)
         serve_timespan = base_serve_timespan + random.uniform(0, serve_timespan_disturb)
-        time = __simulate(copy.deepcopy(request_list), run_timespan, serve_timespan)
+        time = _simulate(copy.deepcopy(request_list), run_timespan, serve_timespan)
         if time > max_time:
             max_time = time
     # return max_time, max(max_time + 3, 1.05 * max_time)
     return math.ceil(max_time), math.ceil(max(max_time + 3, 1.05 * max_time)) + 5
 
 
-def __parse_request_list(input_list):
-    return [__parse_input(request.rstrip()) for request in input_list]
+def _parse_request_list(input_list):
+    return [_parse_input(request.rstrip()) for request in input_list]
 
 
-def __check_input_validity(input_list):
+def _check_input_validity(input_list):
     try:
-        request_list = __parse_request_list(input_list)
-        __check_validity(request_list)
-        base_time, max_time = __calculate_time(request_list)
+        request_list = _parse_request_list(input_list)
+        _check_validity(request_list)
+        base_time, max_time = _calculate_time(request_list)
         if base_time >= 170.0:
             raise ValueError('Request execute time too long')
         return True, 'Your input is valid, base time is ' + str(base_time) + ', max time is ' + str(max_time)
@@ -180,8 +180,8 @@ def __check_input_validity(input_list):
 
 
 def get_base_and_max_time(input_list):
-    request_list = __parse_request_list(input_list)
-    return __calculate_time(request_list)
+    request_list = _parse_request_list(input_list)
+    return _calculate_time(request_list)
 
 
 def check(input_file_path):
@@ -191,7 +191,7 @@ def check(input_file_path):
     with open(input_file_path) as f:
         for line in f:
             input_list.append(line)
-        return __check_input_validity(input_list)
+        return _check_input_validity(input_list)
 
 
 if __name__ == '__main__':

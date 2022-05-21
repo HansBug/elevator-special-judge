@@ -11,10 +11,7 @@ WRONG_ANSWER = 'Wrong Answer | '
 TIME_LIMIT_EXCEEDED = 'Time Limit Exceeded | Your program exceeded max time limit.'
 
 
-def __decrypt_aes(encrypted):
-    pattern = re.compile(r'^\[\s*\d+\.\d+\](.*)')
-    matcher = re.match(pattern, encrypted)
-    cipher = matcher.group(1)
+def _decrypt_aes(cipher):
     try:
         plain = decrypt(cipher)
         plain_json = json.loads(plain)
@@ -25,7 +22,7 @@ def __decrypt_aes(encrypted):
                          'Please make sure that all your outputs are printed by TimableOutput.')
 
 
-def __check_state_list_validity(state_list):
+def _check_state_list_validity(state_list):
     for state in state_list:
         if not (-3 <= state['floor'] <= -1 or 1 <= state['floor'] <= 16):
             raise ValueError(' '.join([
@@ -34,17 +31,17 @@ def __check_state_list_validity(state_list):
                 str(state['floor'])]))
 
 
-def __initialize(input_list, output_list):
+def _initialize(input_list, output_list):
     passenger_list = [parse_input(request) for request in input_list]
     state_list = [parse_output(state) for state in output_list]
     # passenger_list.sort(key=lambda e: e['time']) 暂时用不到，不过之后也许会用到
     # state_list.sort(key=lambda e: e['time']) 输出数据确保时间单调不递减，暂时用不到
     passenger_dict = {passenger.pid: passenger for passenger in passenger_list}
-    __check_state_list_validity(state_list)
+    _check_state_list_validity(state_list)
     return passenger_dict, state_list
 
 
-def __simulate_elevator_arrive(**kwargs):
+def _simulate_elevator_arrive(**kwargs):
     elevator = kwargs['elevator']
     state = kwargs['state']
     time = state['time']
@@ -52,7 +49,7 @@ def __simulate_elevator_arrive(**kwargs):
     elevator.arrive(floor, time)
 
 
-def __simulate_elevator_open(**kwargs):
+def _simulate_elevator_open(**kwargs):
     elevator = kwargs['elevator']
     state = kwargs['state']
     time = state['time']
@@ -60,7 +57,7 @@ def __simulate_elevator_open(**kwargs):
     elevator.open(floor, time)
 
 
-def __simulate_elevator_close(**kwargs):
+def _simulate_elevator_close(**kwargs):
     elevator = kwargs['elevator']
     state = kwargs['state']
     time = state['time']
@@ -68,7 +65,7 @@ def __simulate_elevator_close(**kwargs):
     elevator.close(floor, time)
 
 
-def __simulate_passenger_in(**kwargs):
+def _simulate_passenger_in(**kwargs):
     elevator = kwargs['elevator']
     passenger_dict = kwargs['passenger_dict']
     state = kwargs['state']
@@ -87,7 +84,7 @@ def __simulate_passenger_in(**kwargs):
     elevator.enter_passenger(passenger, floor, time)
 
 
-def __simulate_passenger_out(**kwargs):
+def _simulate_passenger_out(**kwargs):
     elevator = kwargs['elevator']
     passenger_dict = kwargs['passenger_dict']
     state = kwargs['state']
@@ -106,23 +103,23 @@ def __simulate_passenger_out(**kwargs):
     elevator.leave_passenger(passenger, floor, time)
 
 
-def judge(input_list, output_list, check_max_time=False, decrypted=True):
+def judge(input_list, output_list, check_max_time=False, need_decrypt=True):
     base_time, max_time = get_base_and_max_time(input_list)
     elevator = Elevator()
     try:
-        if decrypted:
-            output_list = list(map(__decrypt_aes, output_list))
-        passenger_dict, state_list = __initialize(input_list, output_list)
+        if need_decrypt:
+            output_list = list(map(_decrypt_aes, output_list))
+        passenger_dict, state_list = _initialize(input_list, output_list)
     except ValueError as e:
         return False, str(e), output_list, 0
     state_list.sort(key=lambda elem: elem['time'])
     output_list.sort(key=lambda elem: float(re.findall(r'\[\s*(\d+\.\d{4})\]', elem)[0]))
     simulate_mapper = {
-        'OPEN': __simulate_elevator_open,
-        'CLOSE': __simulate_elevator_close,
-        'IN': __simulate_passenger_in,
-        'OUT': __simulate_passenger_out,
-        'ARRIVE': __simulate_elevator_arrive
+        'OPEN': _simulate_elevator_open,
+        'CLOSE': _simulate_elevator_close,
+        'IN': _simulate_passenger_in,
+        'OUT': _simulate_passenger_out,
+        'ARRIVE': _simulate_elevator_arrive
     }
     for state in state_list:
         try:
@@ -162,5 +159,5 @@ if __name__ == '__main__':
     input_file_path = 'stdin.txt'
     output_file_path = 'stdout.txt'
     _input, _output = open_file(input_file_path, output_file_path)
-    result = judge(_input, _output, decrypted=False)
+    result = judge(_input, _output, need_decrypt=False)
     print(result)
