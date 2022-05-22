@@ -1,0 +1,67 @@
+name: Code Test
+
+on:
+  - push
+
+jobs:
+  try_build_cli:
+    name: Build Standalone CLI
+    runs-on: 'ubuntu-18.04'
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+    container:
+      image: python:${{ matrix.python-version }}
+      options: --user root
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - '3.6.1'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 20
+      - name: Set up system dependences on linux
+        run: |
+          apt-get update
+          apt-get install -y tree cloc wget curl make zip
+          apt-get install -y libxml2-dev libxslt-dev python-dev  # need by pypy3
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-build.txt
+      - name: Test the basic environment
+        run: |
+          python -V
+          pip --version
+          pip list
+          tree .
+      - name: Get package version
+        run: |
+          python -c 'from spj.config.meta import __VERSION__;print(__VERSION__)'
+          echo "PACKAGE_VERSION=$(python -c 'from spj.config.meta import __VERSION__;print(__VERSION__)')" >> $GITHUB_ENV
+          echo "GIT_COMMIT_ID=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=$(python -V | xargs -n 1 | tail -1)" >> $GITHUB_ENV
+          echo "CPU_ARCH=$(uname -m)" >> $GITHUB_ENV
+          echo "OS_NAME=$(uname)" >> $GITHUB_ENV
+      - name: Get CLI name
+        run: |
+          echo "ZIP_NAME=spj-v${{ env.PACKAGE_VERSION }}-${{ env.OS_NAME }}-${{ env.CPU_ARCH }}-${{ env.GIT_COMMIT_ID }}-standalone" >> $GITHUB_ENV
+          echo "CLI_NAME=spj-v${{ env.PACKAGE_VERSION }}-${{ env.OS_NAME }}-${{ env.CPU_ARCH }}" >> $GITHUB_ENV
+      - name: Build standalone cli
+        run: |
+          make build
+          mkdir -p dist/${{ env.CLI_NAME }}
+          cp dist/spj dist/${{ env.CLI_NAME }}/spj
+          cd dist
+          zip -r ${{ env.ZIP_NAME }}.zip ${{ env.CLI_NAME }}
+          cd ..
+          ls -al dist
+          dist/spj -v
+          dist/spj -h
+      - uses: actions/upload-artifact@v2
+        with:
+          name: spj-v${{ env.PACKAGE_VERSION }}-${{ env.OS_NAME }}-${{ env.CPU_ARCH }}-${{ env.GIT_COMMIT_ID }}
+          path: dist
