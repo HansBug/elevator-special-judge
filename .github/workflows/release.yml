@@ -84,8 +84,8 @@ jobs:
           tree .
       - name: Get package version
         run: |
-          python -c 'from spj.config.meta import __VERSION__;print(__VERSION__)'
-          echo "PACKAGE_VERSION=$(python -c 'from spj.config.meta import __VERSION__;print(__VERSION__)')" >> $GITHUB_ENV
+          python -c 'from spj import __VERSION__;print(__VERSION__)'
+          echo "PACKAGE_VERSION=$(python -c 'from spj import __VERSION__;print(__VERSION__)')" >> $GITHUB_ENV
           echo "GIT_COMMIT_ID=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
           echo "PYTHON_VERSION=$(python -V | xargs -n 1 | tail -1)" >> $GITHUB_ENV
           echo "CPU_ARCH=$(uname -m)" >> $GITHUB_ENV
