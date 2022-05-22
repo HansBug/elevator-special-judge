@@ -1,1 +1,2 @@
 pycrypto>=2.6.1
+pyspj>=0.1.0
