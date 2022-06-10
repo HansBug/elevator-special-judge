@@ -1,5 +1,6 @@
 import io
 import re
+from typing import List
 
 from pyspj import pyspj_entry
 
@@ -15,14 +16,22 @@ def _remove_pretime(s: str) -> str:
     return match.group(1)
 
 
+def _tail_strip(lst: List[str]) -> List[str]:
+    i = len(lst)
+    while i > 0 and not lst[i - 1]:
+        i -= 1
+    return lst[:i]
+
+
 def spj_func(stdin: io.TextIOBase, stdout: io.TextIOBase,
              check_max_time=None, need_decrypt=None):
     check_max_time = not not check_max_time
     need_decrypt = not not need_decrypt
     no_pretime = True
 
-    input_list = list(map(str.strip, stdin))
-    output_list = list(map(str.strip, stdout))
+    input_list = _tail_strip(list(map(str.strip, stdin)))
+    output_list = _tail_strip(list(map(str.strip, stdout)))
+    print(output_list)
     if no_pretime:
         output_list = list(map(_remove_pretime, output_list))
 

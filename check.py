@@ -1,9 +1,8 @@
 import copy
+import math
 import os
 import random
 import re
-
-import math
 
 
 def _parse_input(request):
