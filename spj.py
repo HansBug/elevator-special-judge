@@ -6,7 +6,7 @@ from pyspj import pyspj_entry
 
 from judge import judge
 
-__VERSION__ = '0.0.2'
+__VERSION__ = '0.0.3'
 
 PRETIME_PATTERN = re.compile(r'^\[\s*\d+\.\d+\](.*)')
 
