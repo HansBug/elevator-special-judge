@@ -31,7 +31,6 @@ def spj_func(stdin: io.TextIOBase, stdout: io.TextIOBase,
 
     input_list = _tail_strip(list(map(str.strip, stdin)))
     output_list = _tail_strip(list(map(str.strip, stdout)))
-    print(output_list)
     if no_pretime:
         output_list = list(map(_remove_pretime, output_list))
 
